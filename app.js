@@ -7,25 +7,25 @@ let friendIDs = [];
 let tweets = [];
 
 //timestamp
-function timeSince(timeStamp) {
-  var now = new Date(),
-    secondsPast = (now.getTime() - timeStamp.getTime()) / 1000;
-  if(secondsPast < 60){
-    return parseInt(secondsPast) + 's';
-  }
-  if(secondsPast < 3600){
-    return parseInt(secondsPast/60) + 'm';
-  }
-  if(secondsPast <= 86400){
-    return parseInt(secondsPast/3600) + 'h';
-  }
-  if(secondsPast > 86400){
-      day = timeStamp.getDate();
-      month = timeStamp.toDateString().match(/ [a-zA-Z]*/)[0].replace(" ","");
-      year = timeStamp.getFullYear() == now.getFullYear() ? "" :  " "+timeStamp.getFullYear();
-      return day + " " + month + year;
-  }
-}
+// function timeSince(timeStamp) {
+//   var now = new Date(),
+//     secondsPast = (now.getTime() - timeStamp.getTime()) / 1000;
+//   if(secondsPast < 60){
+//     return parseInt(secondsPast) + 's';
+//   }
+//   if(secondsPast < 3600){
+//     return parseInt(secondsPast/60) + 'm';
+//   }
+//   if(secondsPast <= 86400){
+//     return parseInt(secondsPast/3600) + 'h';
+//   }
+//   if(secondsPast > 86400){
+//       day = timeStamp.getDate();
+//       month = timeStamp.toDateString().match(/ [a-zA-Z]*/)[0].replace(" ","");
+//       year = timeStamp.getFullYear() == now.getFullYear() ? "" :  " "+timeStamp.getFullYear();
+//       return day + " " + month + year;
+//   }
+// }
 
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -65,14 +65,36 @@ app.use(
         let photo = data[i].user.profile_image_url;
         let tweetPost = data[i].text;
         let time = data[i].created_at;
-        let timeStamp = timeSince(time);
-        let tweet = {name: name, id : id, photo: photo, url : atURL, post: tweetPost, time: timeStamp}
-       tweets.push(tweet);
+        let retweet = data[i].retweet_count;
+        let favorite = data[i].favorite_count;
+        let quoting = data[i].quoted_status;
+  //      let timeStamp = timeSince(time);
+        let tweet = {name: name, id : id, photo: photo, url : atURL, post: tweetPost, retweeted: retweet, favorited: favorite};
+        if (quoting != undefined){
+          tweet.quoting = quoting;
+        }
+      app.get('/', (req, res)=>{
+        res.render('timeline');
+      })
+
+//       tweets.push(tweet);
       }
-      console.log(tweets);
       next();
     })
   }
 );
+
+// app.get('/', (req, res)=>{
+//   let posts = [];
+//   for(let i = 0; i<= tweets.length; i++){
+//     let post = tweets[i].post;
+//     let id = tweets[i].id;
+//     console.log(post);
+//     posts +=post;
+//   }
+//   console.log(posts);
+//   res.render('timeline', {tweets});
+// });
+
 
 app.listen(3000);
