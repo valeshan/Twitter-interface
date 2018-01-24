@@ -56,9 +56,9 @@ app.use(
        tweets.push(tweet);
       }
       app.get('/', (req, res)=>{
-        res.render('interface');
+        res.render('interface', {friends: friendIDs, myname: t.screen_name});
       })
-      console.log(tweets);
+      console.log(t.user_id);
       next();
     })
   }

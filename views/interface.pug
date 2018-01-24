@@ -4,12 +4,12 @@ html(lang='en')
     title Twitter interface
     link(rel='stylesheet', href='/static/stylesheets/global.css')
   body
-    include includes/header
+    include includes/mainheader
     .bounds.app--body
       .app--section--header
-        include includes/timelineheader
-        include includes/followingheader
-        include includes/dmheader
+        include includes/headers/timelineheader
+        include includes/headers/followingheader
+        include includes/headers/dmheader
       include includes/timeline
       include includes/following
       include includes/dm
