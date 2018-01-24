@@ -5,7 +5,11 @@ html(lang='en')
     link(rel='stylesheet', href='/static/stylesheets/global.css')
   body
     include includes/header
-    .app--section--header
+    .bounds.app--body
+      .app--section--header
+        include includes/timelineheader
+        include includes/followingheader
+        include includes/dmheader
       include includes/timeline
       include includes/following
       include includes/dm
