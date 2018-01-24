@@ -6,27 +6,6 @@ const t = require('./js/config');
 let friendIDs = [];
 let tweets = [];
 
-//timestamp
-// function timeSince(timeStamp) {
-//   var now = new Date(),
-//     secondsPast = (now.getTime() - timeStamp.getTime()) / 1000;
-//   if(secondsPast < 60){
-//     return parseInt(secondsPast) + 's';
-//   }
-//   if(secondsPast < 3600){
-//     return parseInt(secondsPast/60) + 'm';
-//   }
-//   if(secondsPast <= 86400){
-//     return parseInt(secondsPast/3600) + 'h';
-//   }
-//   if(secondsPast > 86400){
-//       day = timeStamp.getDate();
-//       month = timeStamp.toDateString().match(/ [a-zA-Z]*/)[0].replace(" ","");
-//       year = timeStamp.getFullYear() == now.getFullYear() ? "" :  " "+timeStamp.getFullYear();
-//       return day + " " + month + year;
-//   }
-// }
-
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
@@ -38,7 +17,8 @@ app.set('view engine', 'pug');
 
 // app.get('/', (req, res)=>{
 //   return res.send(t.screen_name);
-// })
+// });
+
 app.use(
   (req, res, next)=>{
     t.get('friends/list', { user_id: t.user_id },  function (err, data, res) {
@@ -72,17 +52,23 @@ app.use(
         let tweet = {name: name, id : id, photo: photo, url : atURL, post: tweetPost, retweeted: retweet, favorited: favorite};
         if (quoting != undefined){
           tweet.quoting = quoting;
-        }
-      app.get('/', (req, res)=>{
-        res.render('timeline');
-      })
-
-//       tweets.push(tweet);
+        };
+       tweets.push(tweet);
       }
+      app.get('/', (req, res)=>{
+        res.render('interface');
+      })
+      console.log(tweets);
       next();
     })
   }
 );
+
+
+
+app.listen(3000, function(){
+  console.log("you're connected to port 3000");
+});
 
 // app.get('/', (req, res)=>{
 //   let posts = [];
@@ -97,4 +83,23 @@ app.use(
 // });
 
 
-app.listen(3000);
+//timestamp
+// function timeSince(timeStamp) {
+//   var now = new Date(),
+//     secondsPast = (now.getTime() - timeStamp.getTime()) / 1000;
+//   if(secondsPast < 60){
+//     return parseInt(secondsPast) + 's';
+//   }
+//   if(secondsPast < 3600){
+//     return parseInt(secondsPast/60) + 'm';
+//   }
+//   if(secondsPast <= 86400){
+//     return parseInt(secondsPast/3600) + 'h';
+//   }
+//   if(secondsPast > 86400){
+//       day = timeStamp.getDate();
+//       month = timeStamp.toDateString().match(/ [a-zA-Z]*/)[0].replace(" ","");
+//       year = timeStamp.getFullYear() == now.getFullYear() ? "" :  " "+timeStamp.getFullYear();
+//       return day + " " + month + year;
+//   }
+// }

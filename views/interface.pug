@@ -5,5 +5,8 @@ html(lang='en')
     link(rel='stylesheet', href='/static/stylesheets/global.css')
   body
     include includes/header
-    block main
-    include includes/footer
+    .app--section--header
+      include includes/timeline
+      include includes/following
+      include includes/dm
+    include includes/tweet
