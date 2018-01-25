@@ -15,11 +15,30 @@ app.use('/static', express.static('public'));
 
 app.set('view engine', 'pug');
 
-// app.get('/', (req, res)=>{
-//   return res.send(t.screen_name);
-// });
+
+//************ TIMESTAMP ************//
+
+function parseTwitterDate(time) {
+    let system_date = new Date(Date.parse(time));
+    let user_date = new Date();
+
+    let diff = Math.floor((user_date - system_date) / 1000);
+    if (diff <= 1) {return "just now";}
+    if (diff < 60) {return diff + "s";}
+    if (diff <= 3540) {return Math.round(diff / 60) + "m";}
+    if (diff <= 86400) {return Math.round(diff / 3600) + "h";}
+    if (diff <= 129600) {return "1 day";}
+    if (diff < 604800) {return Math.round(diff / 86400) + " days";}
+    if (diff <= 777600) {return "a week ago";}
+    return "on " + system_date;
+}
+
+
+//************ TWITTER INTERFACE ************//
 
 app.use(
+
+  //************ FOLLOWING ************//
   (req, res, next)=>{
     t.get('friends/list', { user_id: t.user_id },  function (err, data, res) {
       if (err) throw err;
@@ -35,6 +54,8 @@ app.use(
       next();
     })
   },
+
+  //************ TIMELINE ************//
   (req, res, next)=>{
     t.get(`statuses/home_timeline`, { user_id: t.user_id},  function (err, data, res) {
       if (err) throw err;
@@ -58,7 +79,6 @@ app.use(
       app.get('/', (req, res)=>{
         res.render('interface', {friends: friendIDs, myname: t.screen_name, tweets: tweets});
       })
-      console.log(data);
       next();
     })
   }
@@ -69,31 +89,3 @@ app.use(
 app.listen(3000, function(){
   console.log("you're connected to port 3000");
 });
-
-// app.get('/', (req, res)=>{
-//   let posts = [];
-//   for(let i = 0; i<= tweets.length; i++){
-//     let post = tweets[i].post;
-//     let id = tweets[i].id;
-//     console.log(post);
-//     posts +=post;
-//   }
-//   console.log(posts);
-//   res.render('timeline', {tweets});
-// });
-
-
-function parseTwitterDate(time) {
-    let system_date = new Date(Date.parse(time));
-    let user_date = new Date();
-
-    let diff = Math.floor((user_date - system_date) / 1000);
-    if (diff <= 1) {return "just now";}
-    if (diff < 20) {return diff + "s";}
-    if (diff <= 3540) {return Math.round(diff / 60) + "m";}
-    if (diff <= 86400) {return Math.round(diff / 3600) + "h";}
-    if (diff <= 129600) {return "1 day";}
-    if (diff < 604800) {return Math.round(diff / 86400) + " days";}
-    if (diff <= 777600) {return "a week ago";}
-    return "on " + system_date;
-}
