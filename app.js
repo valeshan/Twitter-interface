@@ -42,7 +42,7 @@ app.use(
   (req, res, next)=>{
     t.get('friends/list', { user_id: t.user_id },  function (err, data, res) {
       if (err) throw err;
-     for(let i = 0; i <= 5; i++){
+     for(let i = 0; i <= 4; i++){
        let name = data.users[i].name;
        let url = '@'+ data.users[i].screen_name;
        let id = data.users[i].id_str;
