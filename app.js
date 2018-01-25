@@ -41,6 +41,7 @@ app.use(
       for(let i = 0; i <=4; i++){
         let name = data[i].user.name;
         let url = '@'+ data[i].user.screen_name;
+        let tweet_id = data[i].id_str;
         let id = data[i].user.id_str;
         let photo = data[i].user.profile_image_url;
         let tweetPost = data[i].text;
@@ -48,8 +49,7 @@ app.use(
         let retweet = data[i].retweet_count;
         let favorite = data[i].favorite_count;
         let quoting = data[i].quoted_status;
-  //      let timeStamp = timeSince(time);
-        let tweet = {name: name, id : id, photo: photo, url : url, post: tweetPost, retweeted: retweet, favorited: favorite, time: time};
+        let tweet = {name: name, id : id, photo: photo, url : url, post: tweetPost, retweeted: retweet, favorited: favorite, time: time, tweet_id: tweet_id};
         if (quoting != undefined){
           tweet.quoting = quoting;
         };
@@ -58,7 +58,7 @@ app.use(
       app.get('/', (req, res)=>{
         res.render('interface', {friends: friendIDs, myname: t.screen_name, tweets: tweets});
       })
-      console.log(t.user_id);
+      console.log(data);
       next();
     })
   }
