@@ -25,10 +25,10 @@ app.use(
       if (err) throw err;
      for(let i = 0; i <= 5; i++){
        let name = data.users[i].name;
-       let atURL = '@'+ data.users[i].screen_name;
+       let url = '@'+ data.users[i].screen_name;
        let id = data.users[i].id_str;
        let photo = data.users[i].profile_image_url;
-       let profile = {name: name, id : id, photo: photo, url : atURL}
+       let profile = {name: name, id : id, photo: photo, url : url}
       friendIDs.push(profile);
      };
       console.log(friendIDs);
@@ -36,27 +36,27 @@ app.use(
     })
   },
   (req, res, next)=>{
-    t.get(`statuses/user_timeline`, { user_id: t.user_id},  function (err, data, res) {
+    t.get(`statuses/home_timeline`, { user_id: t.user_id},  function (err, data, res) {
       if (err) throw err;
       for(let i = 0; i <=4; i++){
         let name = data[i].user.name;
-        let atURL = '@'+ data[i].user.screen_name;
+        let url = '@'+ data[i].user.screen_name;
         let id = data[i].user.id_str;
         let photo = data[i].user.profile_image_url;
         let tweetPost = data[i].text;
-        let time = data[i].created_at;
+        let time = parseTwitterDate(data[i].created_at);
         let retweet = data[i].retweet_count;
         let favorite = data[i].favorite_count;
         let quoting = data[i].quoted_status;
   //      let timeStamp = timeSince(time);
-        let tweet = {name: name, id : id, photo: photo, url : atURL, post: tweetPost, retweeted: retweet, favorited: favorite};
+        let tweet = {name: name, id : id, photo: photo, url : url, post: tweetPost, retweeted: retweet, favorited: favorite, time: time};
         if (quoting != undefined){
           tweet.quoting = quoting;
         };
        tweets.push(tweet);
       }
       app.get('/', (req, res)=>{
-        res.render('interface', {friends: friendIDs, myname: t.screen_name});
+        res.render('interface', {friends: friendIDs, myname: t.screen_name, tweets: tweets});
       })
       console.log(t.user_id);
       next();
@@ -83,23 +83,17 @@ app.listen(3000, function(){
 // });
 
 
-//timestamp
-// function timeSince(timeStamp) {
-//   var now = new Date(),
-//     secondsPast = (now.getTime() - timeStamp.getTime()) / 1000;
-//   if(secondsPast < 60){
-//     return parseInt(secondsPast) + 's';
-//   }
-//   if(secondsPast < 3600){
-//     return parseInt(secondsPast/60) + 'm';
-//   }
-//   if(secondsPast <= 86400){
-//     return parseInt(secondsPast/3600) + 'h';
-//   }
-//   if(secondsPast > 86400){
-//       day = timeStamp.getDate();
-//       month = timeStamp.toDateString().match(/ [a-zA-Z]*/)[0].replace(" ","");
-//       year = timeStamp.getFullYear() == now.getFullYear() ? "" :  " "+timeStamp.getFullYear();
-//       return day + " " + month + year;
-//   }
-// }
+function parseTwitterDate(time) {
+    let system_date = new Date(Date.parse(time));
+    let user_date = new Date();
+
+    let diff = Math.floor((user_date - system_date) / 1000);
+    if (diff <= 1) {return "just now";}
+    if (diff < 20) {return diff + "s";}
+    if (diff <= 3540) {return Math.round(diff / 60) + "m";}
+    if (diff <= 86400) {return Math.round(diff / 3600) + "h";}
+    if (diff <= 129600) {return "1 day";}
+    if (diff < 604800) {return Math.round(diff / 86400) + " days";}
+    if (diff <= 777600) {return "a week ago";}
+    return "on " + system_date;
+}
