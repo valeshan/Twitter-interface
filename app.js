@@ -5,6 +5,7 @@ const t = require('./js/config');
 
 let friendIDs = [];
 let tweets = [];
+let user = [];
 
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -38,6 +39,20 @@ function parseTwitterDate(time) {
 
 app.use(
 
+  //************ USER ************//
+  (req, res, next)=>{
+    t.get('account/verify_credentials', { skip_status: true},  function (err, data, res) {
+      if (err) throw err;
+      let username = data.name;
+      let user_pic = data.profile_image_url;
+      let screen_name = data.screen_name;
+      let userinfo = {username: username, user_pic: user_pic, screen_name: screen_name};
+      user.push(userinfo);
+      console.log(user);
+      next();
+    })
+  },
+
   //************ FOLLOWING ************//
   (req, res, next)=>{
     t.get('friends/list', { user_id: t.user_id },  function (err, data, res) {
@@ -50,14 +65,29 @@ app.use(
        let profile = {name: name, id : id, photo: photo, url : url}
       friendIDs.push(profile);
      };
-      console.log(friendIDs);
+      // console.log(friendIDs);
+      // console.log(data);
       next();
     })
   },
 
+  // //*** Unfollow ***//
+  // (req, res, next)=>{
+  //   t.post('friendships/destroy', { skip_status: true},  function (err, data, res) {
+  //     if (err) throw err;
+  //     let username = data.name;
+  //     let user_pic = data.profile_image_url;
+  //     let screen_name = data.screen_name;
+  //     let userinfo = {username: username, user_pic: user_pic, screen_name: screen_name};
+  //     user.push(userinfo);
+  //     console.log(user);
+  //     next();
+  //   })
+  // },
+
   //************ TIMELINE ************//
   (req, res, next)=>{
-    t.get(`statuses/home_timeline`, { user_id: t.user_id},  function (err, data, res) {
+    t.get(`statuses/home_timeline`, { user_id: },  function (err, data, res) {
       if (err) throw err;
       for(let i = 0; i <=4; i++){
         let name = data[i].user.name;
@@ -70,14 +100,15 @@ app.use(
         let retweet = data[i].retweet_count;
         let favorite = data[i].favorite_count;
         let quoting = data[i].quoted_status;
-        let tweet = {name: name, id : id, photo: photo, url : url, post: tweetPost, retweeted: retweet, favorited: favorite, time: time, tweet_id: tweet_id};
+        let tweet = {name: name, id : id, photo: photo, url : url, post: tweetPost,
+                    retweeted: retweet, favorited: favorite, time: time, tweet_id: tweet_id};
         if (quoting != undefined){
           tweet.quoting = quoting;
         };
        tweets.push(tweet);
       }
       app.get('/', (req, res)=>{
-        res.render('interface', {friends: friendIDs, myname: t.screen_name, tweets: tweets});
+        res.render('interface', {friends: friendIDs, myname: t.screen_name, tweets: tweets, user: user});
       })
       next();
     })
