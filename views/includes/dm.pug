@@ -1,7 +1,13 @@
 .grid-33
   .app--section
     ul.app--message--list
-      li
-        h3 Conversation with 
-          a ADD PERSON HERE
-        ul.app--message--conversation
+      each dm in direct_messages
+        li
+          h3 Conversation with
+            a= dm.screen_name
+          ul.app--message--conversation
+            li.app--message
+              .app--avatar(style='background-image: url('+ dm.image +')')
+                img(src = dm.image)
+              p.app--message--text= dm.text
+              p.app--message--timestamp= dm.time
