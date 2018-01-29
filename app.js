@@ -141,10 +141,13 @@ app.use(
        }
   //    console.log(direct_messages);
        app.get('/', (req, res)=>{
+         if (err) throw err;
          res.render('interface', {friends: friendIDs, myname: t.screen_name, tweets: tweets, user: user,
             direct_messages: direct_messages});
        })
+           next();
     })
+
   }
 );
 

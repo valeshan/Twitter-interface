@@ -6,8 +6,15 @@
           h3 Conversation with
             a= dm.screen_name
           ul.app--message--conversation
-            li.app--message
-              .app--avatar(style='background-image: url('+ dm.image +')')
-                img(src = dm.image)
-              p.app--message--text= dm.text
-              p.app--message--timestamp= dm.time
+            if dm.screen_name != user[0].screen_name
+              li.app--message
+                .app--avatar(style='background-image: url('+ dm.image +')')
+                  img(src = dm.image)
+                p.app--message--text= dm.text
+                p.app--message--timestamp= dm.time
+            else
+              li.app--message--me
+                .app--avatar(style='background-image:url('+dm.image+')')
+                  img(src = dm.image)
+                p.app--message--text= dm.text
+                p.app--message--timestamp= dm.time
