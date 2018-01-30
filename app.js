@@ -117,14 +117,6 @@ app.use(
   (req, res, next)=>{
     t.get('direct_messages/events/list', function (err, data, res) {
       if (err) throw err;
-      // for(let i =0; i<=4; i++){
-      //   let message_text = JSON.stringify(data[i].text);
-      //   let sender = data[i].sender.screen_name;
-      //   let image = data[i].sender.profile_image_url_https;
-      //   let time = twitterfyTime(data[i].created_at);
-      //   let message = {message_text: message_text, sender: sender, image: image, time:time};
-      //   direct_messages.push(message);
-      // }
        for(let i=0; i<5; i++){
          let text = data.events[i].message_create.message_data.text;
          let sender = data.events[i].message_create.sender_id;
@@ -139,9 +131,7 @@ app.use(
          }
          let dm = {text:text, sender: sender, time: time, image: image, screen_name: screen_name};
          direct_messages.push(dm);
-         // direct_messages.reverse();
        }
-  //    console.log(direct_messages);
        app.get('/', (req, res)=>{
          if (err) throw err;
          res.render('interface', {friends: friendIDs, myname: t.screen_name, tweets: tweets, user: user,
