@@ -17,3 +17,5 @@ const T = new Twit({
 module.exports = T;
 ```
 Install the required dependencies on your CLI with `npm install`, and start the app with `nodemon` at the appropriate directory.
+
+The app runs on http://localhost:3000/
