@@ -21,7 +21,6 @@
   "homepage": "https://github.com/valeshan/Twitter-interface#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
-    "cookie-parser": "^1.4.3",
     "express": "^4.16.2",
     "nodemon": "^1.14.11",
     "pug": "^2.0.0-rc.4",
