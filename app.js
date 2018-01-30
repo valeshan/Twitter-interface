@@ -6,6 +6,7 @@ const t = require('./js/config');
 let friendIDs = [];
 let tweets = [];
 let user = [];
+let numOfFriends = 0;
 let direct_messages = [];
 
 const bodyParser = require('body-parser');
@@ -32,7 +33,7 @@ function twitterfyTime(time) {
     if (diff <= 129600) {return "1 day";}
     if (diff < 604800) {return Math.round(diff / 86400) + " days";}
     if (diff <= 777600) {return "a week ago";}
-    return "on " + system_date;
+    return "on " + time.toString().slice(0,10);
 }
 
 
@@ -48,7 +49,7 @@ function secsToDate(secs) {
     if (diff <= 129600) {return "1 day";}
     if (diff < 604800) {return Math.round(diff / 86400) + " days";}
     if (diff <= 777600) {return "a week ago";}
-    return "on " + system_date.toString().slice(4, 15);
+    return "on " + system_date.toString().slice(4, 8);
 }
 
 //************ TWITTER INTERFACE ************//
@@ -80,7 +81,7 @@ app.use(
        let profile = {name: name, id : id, url : url, photo: photo}
       friendIDs.push(profile);
      };
-  //   console.log(friendIDs)
+      numOfFriends = data.users.length
       next();
     })
   },
@@ -88,7 +89,7 @@ app.use(
 
   //************ TIMELINE ************//
   (req, res, next)=>{
-    t.get(`statuses/home_timeline`, { user_id: t.user_id},  function (err, data, res) {
+    t.get(`statuses/user_timeline`, { user_id: t.user_id},  function (err, data, res) {
       if (err) throw err;
       for(let i = 0; i <=4; i++){
         let name = data[i].user.name;
@@ -101,11 +102,13 @@ app.use(
         let retweet = data[i].retweet_count;
         let favorite = data[i].favorite_count;
         let quoting = data[i].quoted_status;
+        console.log(data[i].created_at.toString().slice(10));
         let tweet = {name: name, id : id, photo: photo, url : url, post: tweetPost,
                     retweeted: retweet, favorited: favorite, time: time, tweet_id: tweet_id};
         if (quoting != undefined){
           tweet.quoting = quoting;
         };
+      // console.log(data);
        tweets.push(tweet);
       }
       next();
@@ -114,7 +117,7 @@ app.use(
 
   //************ DIRECT MESSAGES ************//
   (req, res, next)=>{
-    t.get('direct_messages/events/list', {count: 5},  function (err, data, res) {
+    t.get('direct_messages/events/list', function (err, data, res) {
       if (err) throw err;
       // for(let i =0; i<=4; i++){
       //   let message_text = JSON.stringify(data[i].text);
@@ -124,7 +127,7 @@ app.use(
       //   let message = {message_text: message_text, sender: sender, image: image, time:time};
       //   direct_messages.push(message);
       // }
-       for(let i=0; i<4; i++){
+       for(let i=0; i<5; i++){
          let text = data.events[i].message_create.message_data.text;
          let sender = data.events[i].message_create.sender_id;
          let time = secsToDate(parseInt(data.events[i].created_timestamp));
@@ -136,14 +139,15 @@ app.use(
            image = user[0].user_pic;
            screen_name = user[0].screen_name;
          }
-         let dm = {text:text, sender: sender, time: time, image: image, screen_name: screen_name}
+         let dm = {text:text, sender: sender, time: time, image: image, screen_name: screen_name};
          direct_messages.push(dm);
+         // direct_messages.reverse();
        }
   //    console.log(direct_messages);
        app.get('/', (req, res)=>{
          if (err) throw err;
          res.render('interface', {friends: friendIDs, myname: t.screen_name, tweets: tweets, user: user,
-            direct_messages: direct_messages});
+            direct_messages: direct_messages, numOfFriends:numOfFriends});
        })
            next();
     })

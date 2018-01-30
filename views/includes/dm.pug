@@ -3,8 +3,9 @@
     ul.app--message--list
       each dm in direct_messages
         li
-          h3 Conversation with
-            a= dm.screen_name
+          if dm.screen_name != user[0].screen_name
+            h3 Conversation with
+              a= dm.screen_name
           ul.app--message--conversation
             if dm.screen_name != user[0].screen_name
               li.app--message
