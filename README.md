@@ -1,6 +1,6 @@
 # Twitter-interface
 
-### This interface provides 3 columns showing your 5 most recent tweets, 5 most recent friends(people you follow), and 5 most recent direct messages.
+### This interface provides 3 columns showing your 5 most recent tweets, 5 most recent friends(people you follow), and 5 most recent direct messages. 
 
 To get started, please create a config file inside the 'js' folder, and name it 'config.js'. Format it in the following way, with your own consumer key and access token data inputted into the object:
 ```
